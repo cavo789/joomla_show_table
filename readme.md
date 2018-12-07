@@ -1,3 +1,5 @@
+![banner](images/banner.jpg)
+
 # Joomla - Show table
 
 > Sometimes you've the need to extract informations from your Joomla's database like f.i. the list of users, articles, ...
