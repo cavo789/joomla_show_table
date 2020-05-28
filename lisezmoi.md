@@ -14,7 +14,7 @@ Récemment, j'ai pris un peu de temps pour améliorer ma gestion de clients : en
 
 Dans ce fichier Excel, je note le pseudo de mon client, son adresse postale, son adresse email, son numéro de TVA s'il en a un, etc. ce qui était du double travail puisque, au moment de l'achat, l'acheteur avait déjà introduit toutes ces données dans sa fiche utilisateur sur mon site Joomla!®.
 
-En bon informaticien toujours soucieux de réduire son travail manuel, mon besoin était donc : "**Depuis Excel, pouvoir lancer une requête vers mon site web pour en extraire la liste des utilisateurs et ainsi ne plus avoir à recopié les données déjà introduites par mes utilisateurs**". Le script _show_table.php_ est né à ce moment.
+En bon informaticien toujours soucieux de réduire son travail manuel, mon besoin était donc : "**Depuis Excel, pouvoir lancer une requête vers mon site web pour en extraire la liste des utilisateurs et ainsi ne plus avoir à recopier les données déjà introduites par mes utilisateurs**". Le script _show_table.php_ est né à ce moment.
 
 ![Sample](sample.png)
 
