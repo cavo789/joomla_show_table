@@ -9,6 +9,12 @@
  * -------
  * 2017-10-04 - Add export buttons (use https://datatables.net/ and no more tablesorter)
  *
+ * 2020-05-28 - Update dependencies versions (by DECHEVRE Marc - https://www.woluweb.be)
+ *      - datatables (js and css):  1.10.21
+ *      - datatables buttons (js and css): 1.6.2
+ *      - pdfmake: 0.1.62
+ *      - jquery: 3.5.1
+ *
  * Description
  * -----------
  * This small script will execute a SQL statement against the database
@@ -129,7 +135,7 @@ class ShowTable
     /**
      * Run the query and return the recordset.
      */
-    public function getRows()
+    public static function getRows()
     {
         $rows = [];
 
@@ -138,7 +144,7 @@ class ShowTable
             $db->setQuery(SQL);
 
             $rows = $db->loadObjectList();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo $e->getMessage();
         }
 
@@ -150,16 +156,16 @@ class ShowTable
      */
     public function addCSS()
     {
-        $script = '';
+        $script = "";
         if ('HTML' === static::$format) {
             $arr=[
                 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
-                'https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css',
-                'https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css',
+                'https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css',
+                'https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css'
             ];
 
             foreach ($arr as $style) {
-                $script .= "<link rel='stylesheet' href='" . $style . "' " .
+                $script .= "<link rel='stylesheet' href='".$style."' ".
                     "rel='stylesheet' media='screen' />\n";
             }
         }
@@ -176,16 +182,17 @@ class ShowTable
 
         if ('HTML' === static::$format) {
             $arr=[
-                '//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js',
-                '//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js',
-                '//cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js',
-                '//cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js',
-                '//cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js',
-                '//cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js',
+                '//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js',
+                '//cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js',
+                '//cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js',
+                '//cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js',
+                '//cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js',
-                //'//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js',
-                //'//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js'
+                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js'
+
             ];
 
             foreach ($arr as $js) {
@@ -286,7 +293,7 @@ class ShowTable
     /**
      * Check if the password is valid; if not, stop immediatly.
      */
-    private function checkPassword()
+    private static function checkPassword()
     {
         // Get the password from the query string
         $password=filter_input(INPUT_GET, 'password', FILTER_SANITIZE_STRING);
@@ -301,7 +308,7 @@ class ShowTable
     /**
      * Die if no configuration.php file found.
      */
-    private function checkConfiguration()
+    private static function checkConfiguration()
     {
         if (!file_exists($config = rtrim(ROOT, DS) . DS . 'configuration.php')) {
             die('<strong>The file ' . $config . ' can\'t be found, please review the ROOT constant to match your website root folder</strong>');
@@ -313,7 +320,7 @@ class ShowTable
     /**
      * Load Joomla framework.
      */
-    private function loadConfiguration()
+    private static function loadConfiguration()
     {
         if (!defined('_JEXEC')) {
             define('_JEXEC', 1);
