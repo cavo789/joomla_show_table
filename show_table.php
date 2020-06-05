@@ -1,6 +1,14 @@
 <?php
+
 /**
- * Author : AVONTURE Christophe - https://www.avonture.be.
+ * Christophe Avonture
+ * php version 7.4.
+ *
+ * @package   Joomla_Show_Table
+ *
+ * @author    Christophe Avonture <christophe@avonture.be>
+ * @copyright 2015-2020 (c) Christophe Avonture
+ * @license   MIT
  *
  * Written date  : 2016-10-16
  * Last modified : 2017-10-04
@@ -43,6 +51,8 @@
  */
 
 namespace Avonture;
+
+// phpcs:disable PSR1.Files.SideEffects
 
 define('TITLE', 'Example of Show_Table');
 
@@ -92,10 +102,18 @@ define('ROOT', __DIR__);
 // If you want to change, use an online tool like f.i. http://www.md5.cz/
 define('PASSWORD', '57ac91865e5064f231cf620988223590');
 
+/**
+ * Run a SQL query against the Joomla database and display the result
+ * as a HTML table with or without layout and extra features like
+ * filtering, sorting, ...
+ */
 class ShowTable
 {
     private static $format = '';
 
+    /**
+     * Constructor.
+     */
     public function __construct()
     {
         if (DEBUG === true) {
@@ -103,7 +121,11 @@ class ShowTable
             ini_set('display_startup_errors', '1');
             ini_set('html_errors', '1');
             ini_set('docref_root', 'http://www.php.net/');
-            ini_set('error_prepend_string', "<div style='color:red; font-family:verdana; border:1px solid red; padding:5px;'>");
+            ini_set(
+                'error_prepend_string',
+                "<div style='color:red; " .
+                "'font-family:verdana; border:1px solid red; padding:5px;'>"
+            );
             ini_set('error_append_string', '</div>');
             error_reporting(E_ALL);
         } else {
@@ -126,46 +148,25 @@ class ShowTable
         if (!in_array(static::$format, ['HTML', 'RAW'])) {
             static::$format='HTML';
         }
-
-        $RAW=('RAW' === static::$format);
-
-        return true;
-    }
-
-    /**
-     * Run the query and return the recordset.
-     */
-    public static function getRows()
-    {
-        $rows = [];
-
-        try {
-            $db = \JFactory::getDBO();
-            $db->setQuery(SQL);
-
-            $rows = $db->loadObjectList();
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-
-        return $rows;
     }
 
     /**
      * Add CSS to the page.
+     *
+     * @return string
      */
-    public function addCSS()
+    public function addCSS(): string
     {
-        $script = "";
+        $script = '';
         if ('HTML' === static::$format) {
             $arr=[
                 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
                 'https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css',
-                'https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css'
+                'https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css',
             ];
 
             foreach ($arr as $style) {
-                $script .= "<link rel='stylesheet' href='".$style."' ".
+                $script .= "<link rel='stylesheet' href='" . $style . "' " .
                     "rel='stylesheet' media='screen' />\n";
             }
         }
@@ -175,8 +176,10 @@ class ShowTable
 
     /**
      * Add JS to the page.
+     *
+     * @return string
      */
-    public function addJS()
+    public function addJS(): string
     {
         $script = '';
 
@@ -191,8 +194,7 @@ class ShowTable
                 '//cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js'
-
+                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js',
             ];
 
             foreach ($arr as $js) {
@@ -239,6 +241,11 @@ class ShowTable
         return $script;
     }
 
+    /**
+     * Undocumented function.
+     *
+     * @return void
+     */
     public function outputTable()
     {
         $rows = self::getRows();
@@ -266,6 +273,7 @@ class ShowTable
                 foreach ($row as $field => $value) {
                     $line .= '<td>' . $value . '</td>';
                 }
+
                 $table .= '<tr>' . $line . '</tr>';
             } // foreach
 
@@ -291,36 +299,70 @@ class ShowTable
     }
 
     /**
-     * Check if the password is valid; if not, stop immediatly.
+     * Run the query and return the recordset.
+     *
+     * @return array
      */
-    private static function checkPassword()
+    public static function getRows(): array
+    {
+        $rows = [];
+
+        try {
+            $db = \JFactory::getDBO();
+            $db->setQuery(SQL);
+
+            $rows = $db->loadObjectList();
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Check if the password is valid; if not, stop immediatly.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     *
+     * @return void
+     */
+    private static function checkPassword(): void
     {
         // Get the password from the query string
         $password=filter_input(INPUT_GET, 'password', FILTER_SANITIZE_STRING);
 
         if (PASSWORD !== md5($password)) {
             header('HTTP/1.0 403 Forbidden');
-            echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="GET">Password: <input type="text" name="password" /><input class="Submit" type="submit" name="submit" /></form>';
+            echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="GET">' .
+                'Password: <input type="text" name="password" />' .
+                '<input class="Submit" type="submit" name="submit" /></form>';
             die();
         }
     }
 
     /**
      * Die if no configuration.php file found.
+     *
+     * @return void
      */
-    private static function checkConfiguration()
+    private static function checkConfiguration(): void
     {
         if (!file_exists($config = rtrim(ROOT, DS) . DS . 'configuration.php')) {
-            die('<strong>The file ' . $config . ' can\'t be found, please review the ROOT constant to match your website root folder</strong>');
+            die(
+                '<strong>The file ' . $config . ' can\'t be found, please review ' .
+                'the ROOT constant to match your website root folder</strong>'
+            );
         }
-
-        return true;
     }
 
     /**
      * Load Joomla framework.
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
+     * @return void
      */
-    private static function loadConfiguration()
+    private static function loadConfiguration(): void
     {
         if (!defined('_JEXEC')) {
             define('_JEXEC', 1);
@@ -340,30 +382,28 @@ class ShowTable
         error_reporting(0);
 
         if (file_exists($fname = JPATH_BASE . '/includes/defines.php')) {
-            require_once $fname;
+            include_once $fname;
         }
 
         if (file_exists($fname = JPATH_BASE . '/includes/framework.php')) {
-            require_once $fname;
+            include_once $fname;
         }
 
         if (file_exists($fname = JPATH_BASE . '/includes/application.php')) {
-            require_once $fname;       // No more present since J3.2
+            include_once $fname;       // No more present since J3.2
         }
 
         if (file_exists($fname = JPATH_BASE . '/libraries/joomla/factory.php')) {
-            require_once $fname;
+            include_once $fname;
         }
 
         if (file_exists($fname = JPATH_BASE . '/libraries/joomla/log/log.php')) {
-            require_once $fname;
+            include_once $fname;
         }
 
         error_reporting($error);
 
-        require_once JPATH_BASE . '/configuration.php';
-
-        return true;
+        include_once JPATH_BASE . '/configuration.php';
     }
 }
 
@@ -372,18 +412,21 @@ $showTable = new \Avonture\ShowTable();
 ?>
 
 <!DOCTYPE html><html lang="en">
-	<head>
-		<meta charset="utf-8"/>
-		<meta name="robots" content="noindex, nofollow" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8;" />
-		<?php echo $showTable->addCSS(); ?>
-	</head>
-	<body>
-		<?php echo $showTable->outputTable(); ?>
-		<?php echo $showTable->addJS(); ?>
-	</body>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8;" />
+        <?php echo $showTable->addCSS(); ?>
+    </head>
+    <style>
+        #tbl {margin-left : 0px ;}
+    </style>
+    <body>
+        <?php echo $showTable->outputTable(); ?>
+        <?php echo $showTable->addJS(); ?>
+    </body>
 </html>
 
 <?php
