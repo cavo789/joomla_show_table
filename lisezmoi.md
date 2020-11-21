@@ -16,7 +16,7 @@ Dans ce fichier Excel, je note le pseudo de mon client, son adresse postale, son
 
 En bon informaticien toujours soucieux de réduire son travail manuel, mon besoin était donc : "**Depuis Excel, pouvoir lancer une requête vers mon site web pour en extraire la liste des utilisateurs et ainsi ne plus avoir à recopier les données déjà introduites par mes utilisateurs**". Le script _show_table.php_ est né à ce moment.
 
-![Sample](sample.png)
+![Sample](./images/sample.png)
 
 ## show_table.php
 
@@ -92,10 +92,10 @@ Par défaut, l'accès à la page est protégé par un mot de passe. Le mot de pa
 Le mot de passe est défini dans le code source de `show_table.php`, cherchez la ligne suivante (elle se trouve dans la partie supérieure du fichier) :
 
 ```php
-define('PASSWORD','57ac91865e5064f231cf620988223590');
+const PASSWORD = '57ac91865e5064f231cf620988223590';
 ```
 
-Le mot de passe, **Joomla**, est crypté en md5. Utilisez un site internet comme p.ex. [http://www.md5.cz/](http://www.md5.cz/) pour obtenir le md5 d'un nouveau mot de passe (pour illustration le mot _show_table_, en md5, donne _1bb2132da14d711ab17d4786fcd80710_). Copiez/coller votre hash md5 dans le fichier.
+Le mot de passe, **Joomla**, est crypté en md5. Utilisez un site internet comme p.ex. [http://www.md5.cz/](http://www.md5.cz/) pour obtenir le md5 d'un nouveau mot de passe (pour illustration le mot *show_table*, en md5, donne *1bb2132da14d711ab17d4786fcd80710*). Copiez/coller votre hash md5 dans le fichier.
 
 ## Utilisation
 
@@ -111,17 +111,15 @@ Une fois votre instruction SQL parachevée, le script `show_table.php` est fin p
 
 ### Au départ d'Excel
 
-_Peut-être est-ce aussi possible avec d'autres tableurs mais désolé, je n'utilise qu'Excel._
+*Peut-être est-ce aussi possible avec d'autres tableurs mais désolé, je n'utilise qu'Excel.*
 
-_Mise-à-jour 19/12 - Emmanuel Danan (@vistamedia) m'indique qu'il serait possible de récupérer des données externes depuis Open Office.  Lire [https://wiki.openoffice.org/wiki/Documentation/OOo3_User_Guides/Calc_Guide/Linking_to_external_data](https://wiki.openoffice.org/wiki/Documentation/OOo3_User_Guides/Calc_Guide/Linking_to_external_data)_
+**Depuis Microsoft Excel, créez un nouveau fichier ou ouvrez un fichier existant (votre fichier de gestion de clients p.ex.).**
 
-\*\*Depuis Microsoft Excel, créez un nouveau fichier ou ouvrez un fichier existant (votre fichier de gestion de clients p.ex.).
-
-Activez une feuille de calcul vierge et cliquez sur le menu Données (_Data_). Cliquez ensuite sur le bouton "Depuis le web" (_From Web_).
+Activez une feuille de calcul vierge et cliquez sur le menu Données (*Data*). Cliquez ensuite sur le bouton "Depuis le web" (*From Web*).
 
 Une nouvelle fenêtre va s'afficher et vous devrez renseigner l'adresse vers une page web. Il faut y mentionner l'URL vers le script `show_table.php` avec, attention, deux paramètres : le mot de passe à utiliser et le format RAW, lire ci-dessous.
 
-![Worksheet](worksheet.png)
+![Worksheet](./images/worksheet.png)
 
 En Excel, l'affichage sera fera dans un tableau sans mise en forme aucune mais rien ne vous interdit ensuite de mettre en forme la ligne avec les noms des champs, d'insérer des lignes vierges au-dessus pour afficher un titre, ...
 
@@ -133,7 +131,7 @@ A l'utilisation de `show_table.php, vous verrez que des paramètres en querystri
 
 ### password
 
-Le mot de passe, **<u>en clair!</u>**, est mentionné dans l'URL. Lorsque le paramètre `password` est précisé, le script ne va plus afficher le formulaire de connexion (si le mot de passe est valide) et immédiatement afficher les résultats.
+Le mot de passe, **en clair!**, est mentionné dans l'URL. Lorsque le paramètre `password` est précisé, le script ne va plus afficher le formulaire de connexion (si le mot de passe est valide) et immédiatement afficher les résultats.
 
 ### format
 

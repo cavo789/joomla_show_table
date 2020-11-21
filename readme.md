@@ -38,31 +38,31 @@ To make this script yours :
 
 Start a browser and run the file.
 
-You'll need to provide the password. By default, it's **`Joomla`** so use an URL like this one : `http://yoursite/show_table.php?password=Joomla`
+You'll need to provide the password. By default, it's **`Joomla`** so use an URL like this one : `https://yoursite/show_table.php?password=Joomla`
 
 Note: take a look to the `users.php` which is a simplified and ready-to-use version for getting the list of your Joomla's users.
 
 ### To get a RAW output
 
-`http://yoursite/show_table.php?password=Joomla&format=RAW`
+`https://yoursite/show_table.php?password=Joomla&format=RAW`
 
 ### To get a HTML output
 
-`http://yoursite/show_table.php?password=Joomla&format=HTML`
+`https://yoursite/show_table.php?password=Joomla&format=HTML`
 
 ## Images
 
 HTML output with filtering and column sortering
 
-![Sample](sample.png)
+![Sample](./images/sample.png)
 
 Creation of a data connection in Excel
 
-![Worksheet](worksheet.png)
+![Worksheet](./images/worksheet.png)
 
 Then, in Excel, refresh the list to get the latest version of your data
 
-![Refresh](refresh.png)
+![Refresh](./images/refresh.png)
 
 ## License
 
