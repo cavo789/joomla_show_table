@@ -2,16 +2,18 @@
 
 /**
  * Christophe Avonture
- * php version 7.4.
+ * php version 7.2
  *
- * @package   Joomla_Show_Table
+ * @package   Avonture/joomla_Show_Table
  *
  * @author    Christophe Avonture <christophe@avonture.be>
  * @copyright 2015-2020 (c) Christophe Avonture
  * @license   MIT
  *
  * Written date  : 2016-10-16
- * Last modified : 2017-10-04
+ * Last modified : 2020-11-21
+ *
+ * ! DEFAULT PASSWORD IS "Joomla". See constant PASSWORD below !
  *
  * Changes
  * -------
@@ -22,6 +24,8 @@
  *      - datatables buttons (js and css): 1.6.2
  *      - pdfmake: 0.1.62
  *      - jquery: 3.5.1
+ *
+ * 2020-11-21 - Refactoring
  *
  * Description
  * -----------
@@ -54,13 +58,10 @@ namespace Avonture;
 
 // phpcs:disable PSR1.Files.SideEffects
 
-define('TITLE', 'Example of Show_Table');
-
 // This is an example : this SQL will retrieve all users defined in your
 // database and will return ID, name, pseudo, email, register date, last visit
 // date and the group of the user (registered, super-users, ...)
-
-define(
+\define(
     'SQL',
     'SELECT U.id UserID, U.name Name, U.username UserName, ' .
     'U.email eMail, U.registerDate RegisterDate, ' .
@@ -85,22 +86,6 @@ define(
     'ORDER BY C.created DESC'
 );
 */
-define('DEBUG', false);
-define('DS', DIRECTORY_SEPARATOR);
-
-// Root folder of Joomla. If you've save this script in the root
-// folder of Joomla, just leave __DIR__ otherwise you'll need
-// to update this constant and specify your own root
-define('ROOT', __DIR__);
-//define('ROOT', 'C:\Christophe\Sites\beta');
-
-// Use this line instead the previous if you've put the script in
-// a subfolder of your website root
-//define('ROOT',dirname(__DIR__));
-
-// Password to use.  The default one is "Joomla"
-// If you want to change, use an online tool like f.i. http://www.md5.cz/
-define('PASSWORD', '57ac91865e5064f231cf620988223590');
 
 /**
  * Run a SQL query against the Joomla database and display the result
@@ -109,44 +94,96 @@ define('PASSWORD', '57ac91865e5064f231cf620988223590');
  */
 class ShowTable
 {
-    private static $format = '';
+    /**
+     * Title of the page (heading 1)
+     *
+     * @var string
+     */
+    const TITLE = 'Example of Show_Table';
+ 
+    /**
+     * Enable/disable debug mode
+     *
+     * @var boolean
+     */
+    const DEBUG = false;
+
+    /**
+     * OS Directory separator
+     *
+     * @var string
+     */
+    const DS = DIRECTORY_SEPARATOR;
+
+    /**
+     * Password to use.  The default one is "Joomla"
+     *
+     * If you want to change, use an online tool like f.i. http://www.md5.cz/
+     *
+     * @var string
+     */
+    const PASSWORD = '57ac91865e5064f231cf620988223590';
+
+    /**
+     * Root folder of Joomla. If you've save this script in the root
+     * folder of Joomla, just leave __DIR__ otherwise you'll need
+     * to update this constant and specify your own root
+     *
+     * You can manually force a folder like f.i. "C:\Christophe\Sites\beta"
+     *
+     * @var string
+     */
+    const ROOT = __DIR__;
+
+    /**
+     * Desired output format
+     *
+     * @var string f.i. "html" or "raw"
+     */
+    private $format = '';
 
     /**
      * Constructor.
      */
     public function __construct()
     {
-        if (DEBUG === true) {
-            ini_set('display_errors', '1');
-            ini_set('display_startup_errors', '1');
-            ini_set('html_errors', '1');
-            ini_set('docref_root', 'http://www.php.net/');
-            ini_set(
-                'error_prepend_string',
-                "<div style='color:red; " .
-                "'font-family:verdana; border:1px solid red; padding:5px;'>"
-            );
-            ini_set('error_append_string', '</div>');
-            error_reporting(E_ALL);
-        } else {
-            ini_set('error_reporting', E_ALL & ~E_NOTICE);
-        }
+        // Enable/disable debug mode
+        $this->debugMode();
 
         // Die if the pasword isn't supplied
-        self::checkPassword();
+        $this->checkPassword();
 
         // Die if no configuration.php file found
-        self::checkConfiguration();
+        $this->checkConfiguration();
 
         // Load Joomla framework
-        self::loadConfiguration();
+        $this->loadConfiguration();
 
         // Get the requested format : HTML or RAW.
         // If nothing is specified, HTML will be the default one
-        static::$format = filter_input(INPUT_GET, 'format', FILTER_SANITIZE_STRING);
-        static::$format = strtoupper(static::$format);
-        if (!in_array(static::$format, ['HTML', 'RAW'])) {
-            static::$format='HTML';
+        $this->setFormat((string) \filter_input(INPUT_GET, 'format', FILTER_SANITIZE_STRING));
+    }
+
+    /**
+     * Enable/disable debug mode
+     *
+     * @return void
+     */
+    private function debugMode(): void
+    {
+        if (self::DEBUG) {
+            \ini_set('display_errors', '1');
+            \ini_set('display_startup_errors', '1');
+            \ini_set('html_errors', '1');
+            \ini_set('docref_root', 'http://www.php.net/');
+            \ini_set(
+                'error_prepend_string',
+                '<div style=\'color:red; \'font-family:verdana; border:1px solid red; padding:5px;\'>'
+            );
+            \ini_set('error_append_string', '</div>');
+            \error_reporting(E_ALL);
+        } else {
+            \ini_set('error_reporting', strval(E_ALL & ~E_NOTICE));
         }
     }
 
@@ -158,7 +195,8 @@ class ShowTable
     public function addCSS(): string
     {
         $script = '';
-        if ('HTML' === static::$format) {
+
+        if ('HTML' === $this->getFormat()) {
             $arr=[
                 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
                 'https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css',
@@ -183,7 +221,7 @@ class ShowTable
     {
         $script = '';
 
-        if ('HTML' === static::$format) {
+        if ('HTML' === $this->getFormat()) {
             $arr=[
                 '//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js',
@@ -242,17 +280,18 @@ class ShowTable
     }
 
     /**
-     * Undocumented function.
+     * Generate the output table
      *
-     * @return void
+     * @return string The HTML table
      */
-    public function outputTable()
+    public function outputTable(): string
     {
         $rows = self::getRows();
 
         $return = '';
+        $table = '';
 
-        if (count($rows) > 0) {
+        if (\count($rows) > 0) {
             // Output the table
             $table = '<table id="tbl" class="display compact nowrap order-column">';
 
@@ -270,24 +309,25 @@ class ShowTable
 
             foreach ($rows as $row) {
                 $line='';
-                foreach ($row as $field => $value) {
+
+                foreach ($row as $value) {
                     $line .= '<td>' . $value . '</td>';
                 }
 
                 $table .= '<tr>' . $line . '</tr>';
-            } // foreach
+            }
 
             $table .= '</tbody></table>';
-        } // if (count($rows)>0)
+        }
 
         $return = $table;
 
-        if ('HTML' === static::$format) {
+        if ('HTML' === $this->getFormat()) {
             // Get a few informations
             $infos = '<p><strong>Number of records &nbsp;:&nbsp;' .
-                number_format(count($rows)) . '</strong></p>';
+                \number_format(\count($rows)) . '</strong></p>';
 
-            $sTitle = trim(TITLE);
+            $sTitle = \trim(self::TITLE);
             if ('' !== $sTitle) {
                 $sTitle = '<h1>' . $sTitle . '</h1>';
             }
@@ -312,8 +352,8 @@ class ShowTable
             $db->setQuery(SQL);
 
             $rows = $db->loadObjectList();
-        } catch (\Exception $e) {
-            echo $e->getMessage();
+        } catch (\Exception $exception) {
+            echo $exception->getMessage();
         }
 
         return $rows;
@@ -326,12 +366,12 @@ class ShowTable
      *
      * @return void
      */
-    private static function checkPassword(): void
+    private function checkPassword(): void
     {
         // Get the password from the query string
-        $password=filter_input(INPUT_GET, 'password', FILTER_SANITIZE_STRING);
+        $password=\filter_input(INPUT_GET, 'password', FILTER_SANITIZE_STRING);
 
-        if (PASSWORD !== md5($password)) {
+        if (self::PASSWORD !== \md5($password)) {
             header('HTTP/1.0 403 Forbidden');
             echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="GET">' .
                 'Password: <input type="text" name="password" />' .
@@ -345,13 +385,27 @@ class ShowTable
      *
      * @return void
      */
-    private static function checkConfiguration(): void
+    private function checkConfiguration(): void
     {
-        if (!file_exists($config = rtrim(ROOT, DS) . DS . 'configuration.php')) {
+        if (!\file_exists($config = \rtrim(self::ROOT, self::DS) . self::DS . 'configuration.php')) {
             die(
                 '<strong>The file ' . $config . ' can\'t be found, please review ' .
                 'the ROOT constant to match your website root folder</strong>'
             );
+        }
+    }
+    
+    /**
+     * Load a file if it exists
+     *
+     * @param string $path Filename
+     *
+     * @return void
+     */
+    private function includeFile(string $path): void
+    {
+        if (\file_exists($path)) {
+            include_once $path;
         }
     }
 
@@ -362,52 +416,68 @@ class ShowTable
      *
      * @return void
      */
-    private static function loadConfiguration(): void
+    private function loadConfiguration(): void
     {
-        if (!defined('_JEXEC')) {
-            define('_JEXEC', 1);
+        if (!\defined('_JEXEC')) {
+            \define('_JEXEC', 1);
         }
 
-        if (!defined('JPATH_BASE')) {
-            define('JPATH_BASE', rtrim(ROOT, DS));
+        if (!\defined('JPATH_BASE')) {
+            \define('JPATH_BASE', \rtrim(self::ROOT, self::DS));
         }
 
-        if (!defined('JPATH_PLATFORM')) {
-            define('JPATH_PLATFORM', rtrim(ROOT, DS) . DS . 'libraries');
+        if (!\defined('JPATH_PLATFORM')) {
+            \define('JPATH_PLATFORM', \rtrim(self::ROOT, self::DS) . self::DS . 'libraries');
         }
 
         // include joomla core files (disable errors because
         // Joomla produde WARNINGs and NOTICES)
-        $error=error_reporting();
-        error_reporting(0);
+        $error=\error_reporting();
+        \error_reporting(0);
 
-        if (file_exists($fname = JPATH_BASE . '/includes/defines.php')) {
-            include_once $fname;
+        $this->includeFile(JPATH_BASE . '/includes/defines.php');
+        $this->includeFile(JPATH_BASE . '/includes/framework.php');
+        $this->includeFile(JPATH_BASE . '/includes/application.php'); // No more present since J3.2
+        $this->includeFile(JPATH_BASE . '/libraries/joomla/factory.php');
+        $this->includeFile(JPATH_BASE . '/libraries/joomla/log/log.php');
+
+        \error_reporting($error);
+
+        $this->includeFile(JPATH_BASE . '/configuration.php');
+    }
+
+    /**
+     * Desired output format
+     *
+     * @param string  $format  f.i. "HTML" or "RAW"
+     *
+     * @return  void
+     */
+    public function setFormat(string $format = 'HTML'): void
+    {
+        if ('' === $format) {
+            $format = 'HTML';
         }
 
-        if (file_exists($fname = JPATH_BASE . '/includes/framework.php')) {
-            include_once $fname;
+        $this->format = \strtoupper($format);
+
+        if (!\in_array($this->format, ['HTML', 'RAW'])) {
+            $this->format='HTML';
         }
+    }
 
-        if (file_exists($fname = JPATH_BASE . '/includes/application.php')) {
-            include_once $fname;       // No more present since J3.2
-        }
-
-        if (file_exists($fname = JPATH_BASE . '/libraries/joomla/factory.php')) {
-            include_once $fname;
-        }
-
-        if (file_exists($fname = JPATH_BASE . '/libraries/joomla/log/log.php')) {
-            include_once $fname;
-        }
-
-        error_reporting($error);
-
-        include_once JPATH_BASE . '/configuration.php';
+    /**
+     * Get the desired output format
+     *
+     * @return  string f.i. "html" or "raw"
+     */
+    public function getFormat(): string
+    {
+        return $this->format;
     }
 }
 
-$showTable = new \Avonture\ShowTable();
+$showTable = new ShowTable();
 
 ?>
 
@@ -428,7 +498,3 @@ $showTable = new \Avonture\ShowTable();
         <?php echo $showTable->addJS(); ?>
     </body>
 </html>
-
-<?php
-unset($showTable);
-?>

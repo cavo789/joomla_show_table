@@ -1,0 +1,21 @@
+{
+    "name": "avonture/joomla_show_table",
+    "description": "This small script will execute a SQL statement against the database of your Joomla website and will show the result in a nice HTML table (bootstrap). When the output is HTML, the DataTables plugin will be used to provide extra functionnalities like sorting and filtering.",
+    "type": "project",
+    "require": {
+        "rector/rector": "^0.8.56",
+        "php": ">7.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christophe Avonture",
+            "email": "christophe@avonture.be"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Avonture\\": "src/"
+        }
+    }
+}
