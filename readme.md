@@ -1,6 +1,6 @@
-![banner](images/banner.jpg)
+# Show table
 
-# Joomla - Show table
+![Show table](./banner.svg)
 
 > Sometimes you've the need to extract informations from your Joomla's database like f.i. the list of users, articles, ...
 

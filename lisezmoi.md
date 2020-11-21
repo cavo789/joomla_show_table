@@ -1,6 +1,6 @@
-![banner](images/banner.jpg)
+# Show table
 
-# Joomla - Show table
+![Show table](./banner.svg)
 
 > Afficher des données de Joomla!® en dehors de Joomla
 
