@@ -1,6 +1,6 @@
 # Show table
 
-![Joomla 5.1](https://img.shields.io/badge/joomla-5.1-brightgreen?style=flat) ![PHP 8.2.18](https://img.shields.io/badge/php-8.2. 18-brightgreen?style=flat)
+![Joomla 5.1](https://img.shields.io/badge/joomla-5.1-brightgreen?style=flat) ![PHP 8.2.18](https://img.shields.io/badge/php-8.2-brightgreen?style=flat)
 
 ![Show table](./banner.svg)
 
