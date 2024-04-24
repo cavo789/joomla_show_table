@@ -2,24 +2,24 @@
 
 /**
  * Christophe Avonture
- * php version 7.2
+ * php version 8.1
  *
- * @package   Avonture/joomla_Show_Table
+ * @package Avonture/joomla_Show_Table
  *
  * @author    Christophe Avonture <christophe@avonture.be>
  * @copyright 2015-2020 (c) Christophe Avonture
  * @license   MIT
  *
  * Written date  : 2016-10-16
- * Last modified : 2020-11-21
+ * Last modified : 2024-04-24
  *
  * ! DEFAULT PASSWORD IS "Joomla". See constant PASSWORD below !
  *
  * Changes
  * -------
- * 2017-10-04 - Add export buttons (use https://datatables.net/ and no more tablesorter)
+ * 2017-10-04 - Add export buttons (use https://datatables.net/ and no more table sorter)
  *
- * 2020-05-28 - Update dependencies versions (by DECHEVRE Marc - https://www.woluweb.be)
+ * 2020-05-28 - Update dependencies versions (by Dechèvre Marc - https://www.woluweb.be)
  *      - datatables (js and css):  1.10.21
  *      - datatables buttons (js and css): 1.6.2
  *      - pdfmake: 0.1.62
@@ -27,13 +27,19 @@
  *
  * 2020-11-21 - Refactoring
  *
+ * 2024-04-24 - PHP 8.2.18 / Joomla 5
+ *      - datatables (js and css):  2.0.5
+ *      - datatables buttons (js and css): 3.0.2
+ *      - pdfmake: 0.0.10
+ *      - jquery: 5.3.2
+ * 
  * Description
  * -----------
  * This small script will execute a SQL statement against the database
  * of your Joomla website and will show the result in a nice HTML
  * table (bootstrap).
  * When the output is HTML, the DataTables plugin will be used to
- * provide extra functionnalities like sorting and filtering.
+ * provide extra functionalities like sorting and filtering.
  *
  * Parameters :
  *
@@ -41,7 +47,7 @@
  *
  *   * format   : can be 'HTML' (default) or 'RAW'
  *                RAW will only output a table tag without html headers
- *                or javascript. RAW will be usefull when f.i. the table
+ *                or javascript. RAW will be useful when f.i. the table
  *                will be used in a spreadsheet application or as input for
  *                an another program.
  *                For instance : in Excel, you can create a Data Query.
@@ -72,7 +78,7 @@ namespace Avonture;
     'ORDER BY registerDate DESC, name, GroupTitle ASC'
 );
 
-// SQL statement for retrieving informations from, f.i., the content table
+// SQL statement for retrieving information from, f.i., the content table
 /*
 define(
     'SQL',
@@ -99,21 +105,21 @@ class ShowTable
      *
      * @var string
      */
-    const TITLE = 'Example of Show_Table';
- 
+    public const TITLE = 'Example of Show_Table';
+
     /**
      * Enable/disable debug mode
      *
      * @var boolean
      */
-    const DEBUG = false;
+    public const DEBUG = true;
 
     /**
      * OS Directory separator
      *
      * @var string
      */
-    const DS = DIRECTORY_SEPARATOR;
+    public const DS = DIRECTORY_SEPARATOR;
 
     /**
      * Password to use.  The default one is "Joomla"
@@ -122,7 +128,7 @@ class ShowTable
      *
      * @var string
      */
-    const PASSWORD = '57ac91865e5064f231cf620988223590';
+    public const PASSWORD = '57ac91865e5064f231cf620988223590';
 
     /**
      * Root folder of Joomla. If you've save this script in the root
@@ -133,7 +139,7 @@ class ShowTable
      *
      * @var string
      */
-    const ROOT = __DIR__;
+    public const ROOT = __DIR__;
 
     /**
      * Desired output format
@@ -150,7 +156,7 @@ class ShowTable
         // Enable/disable debug mode
         $this->debugMode();
 
-        // Die if the pasword isn't supplied
+        // Die if the password isn't supplied
         $this->checkPassword();
 
         // Die if no configuration.php file found
@@ -161,7 +167,7 @@ class ShowTable
 
         // Get the requested format : HTML or RAW.
         // If nothing is specified, HTML will be the default one
-        $this->setFormat((string) \filter_input(INPUT_GET, 'format', FILTER_SANITIZE_STRING));
+        $this->setFormat((string) \filter_input(INPUT_GET, 'format', FILTER_UNSAFE_RAW));
     }
 
     /**
@@ -197,10 +203,11 @@ class ShowTable
         $script = '';
 
         if ('HTML' === $this->getFormat()) {
-            $arr=[
-                'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+            $arr = [
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
                 'https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css',
-                'https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css',
+                'https://cdn.datatables.net/2.0.5/css/dataTables.bootstrap5.min.css',
+                'https://cdn.datatables.net/buttons/3.0.2/css/buttons.bootstrap5.min.css'
             ];
 
             foreach ($arr as $style) {
@@ -222,17 +229,18 @@ class ShowTable
         $script = '';
 
         if ('HTML' === $this->getFormat()) {
-            $arr=[
+            $arr = [
                 '//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js',
-                '//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js',
-                '//cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js',
-                '//cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js',
-                '//cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js',
-                '//cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/pdfmake.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.62/vfs_fonts.js',
+                '//cdn.datatables.net/2.0.5/js/dataTables.min.js',
+                '//cdn.datatables.net/2.0.5/js/dataTables.bootstrap5.min.js',
+                '//cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.min.js',
+                '//cdn.datatables.net/buttons/3.0.2/js/buttons.flash.min.js',
+                '//cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js',
+                '//cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js',
             ];
 
             foreach ($arr as $js) {
@@ -296,7 +304,7 @@ class ShowTable
             $table = '<table id="tbl" class="display compact nowrap order-column">';
 
             // Output the list of fields name
-            $line='';
+            $line = '';
 
             foreach ($rows[0] as $field => $value) {
                 $line .= '<th>' . $field . '</th>';
@@ -308,7 +316,7 @@ class ShowTable
                 '<tbody>';
 
             foreach ($rows as $row) {
-                $line='';
+                $line = '';
 
                 foreach ($row as $value) {
                     $line .= '<td>' . $value . '</td>';
@@ -323,7 +331,7 @@ class ShowTable
         $return = $table;
 
         if ('HTML' === $this->getFormat()) {
-            // Get a few informations
+            // Get a few information
             $infos = '<p><strong>Number of records &nbsp;:&nbsp;' .
                 \number_format(\count($rows)) . '</strong></p>';
 
@@ -339,16 +347,18 @@ class ShowTable
     }
 
     /**
-     * Run the query and return the recordset.
+     * Run the query and return the record set.
      *
      * @return array
      */
     public static function getRows(): array
     {
+
         $rows = [];
 
         try {
-            $db = \JFactory::getDBO();
+            $db = \Joomla\CMS\Factory::getDBO();
+
             $db->setQuery(SQL);
 
             $rows = $db->loadObjectList();
@@ -360,7 +370,7 @@ class ShowTable
     }
 
     /**
-     * Check if the password is valid; if not, stop immediatly.
+     * Check if the password is valid; if not, stop immediately.
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      *
@@ -369,7 +379,7 @@ class ShowTable
     private function checkPassword(): void
     {
         // Get the password from the query string
-        $password=\filter_input(INPUT_GET, 'password', FILTER_SANITIZE_STRING);
+        $password = \filter_input(INPUT_GET, 'password', FILTER_UNSAFE_RAW);
 
         if (self::PASSWORD !== \md5($password)) {
             header('HTTP/1.0 403 Forbidden');
@@ -394,20 +404,6 @@ class ShowTable
             );
         }
     }
-    
-    /**
-     * Load a file if it exists
-     *
-     * @param string $path Filename
-     *
-     * @return void
-     */
-    private function includeFile(string $path): void
-    {
-        if (\file_exists($path)) {
-            include_once $path;
-        }
-    }
 
     /**
      * Load Joomla framework.
@@ -418,40 +414,50 @@ class ShowTable
      */
     private function loadConfiguration(): void
     {
-        if (!\defined('_JEXEC')) {
-            \define('_JEXEC', 1);
+
+        /* Initialize Joomla framework */
+        define('_JEXEC', 1);
+        // Load system defines
+        if (file_exists(dirname(__FILE__) . '/defines.php')) {
+            include_once dirname(__FILE__) . '/defines.php';
         }
 
-        if (!\defined('JPATH_BASE')) {
-            \define('JPATH_BASE', \rtrim(self::ROOT, self::DS));
+        if (!defined('_JDEFINES')) {
+            define('JPATH_BASE', dirname(__FILE__));
+            include_once JPATH_BASE . '/includes/defines.php';
         }
 
-        if (!\defined('JPATH_PLATFORM')) {
-            \define('JPATH_PLATFORM', \rtrim(self::ROOT, self::DS) . self::DS . 'libraries');
-        }
+        include_once JPATH_BASE . '/includes/framework.php';
 
-        // include joomla core files (disable errors because
-        // Joomla produde WARNINGs and NOTICES)
-        $error=\error_reporting();
-        \error_reporting(0);
+        /* Create the Application */
+        $container = \Joomla\CMS\Factory::getContainer();
 
-        $this->includeFile(JPATH_BASE . '/includes/defines.php');
-        $this->includeFile(JPATH_BASE . '/includes/framework.php');
-        $this->includeFile(JPATH_BASE . '/includes/application.php'); // No more present since J3.2
-        $this->includeFile(JPATH_BASE . '/libraries/joomla/factory.php');
-        $this->includeFile(JPATH_BASE . '/libraries/joomla/log/log.php');
+        $container->alias('session.web', 'session.web.site')
+            ->alias('session', 'session.web.site')
+            ->alias('JSession', 'session.web.site')
+            ->alias(\Joomla\CMS\Session\Session::class, 'session.web.site')
+            ->alias(\Joomla\Session\Session::class, 'session.web.site')
+            ->alias(\Joomla\Session\SessionInterface::class, 'session.web.site');
 
-        \error_reporting($error);
+        // Instantiate the application.
+        $app = $container->get(\Joomla\CMS\Application\SiteApplication::class);
 
-        $this->includeFile(JPATH_BASE . '/configuration.php');
+        // Load the extension Namespaces
+        \JLoader::register('JNamespacePsr4Map', JPATH_LIBRARIES . '/namespacemap.php');
+        $extensionPsr4Loader = new \JNamespacePsr4Map();
+        $extensionPsr4Loader->load();
+
+
+        // Set the application as global app
+        \Joomla\CMS\Factory::$application = $app;
     }
 
     /**
      * Desired output format
      *
-     * @param string  $format  f.i. "HTML" or "RAW"
+     * @param string $format f.i. "HTML" or "RAW"
      *
-     * @return  void
+     * @return void
      */
     public function setFormat(string $format = 'HTML'): void
     {
@@ -462,14 +468,14 @@ class ShowTable
         $this->format = \strtoupper($format);
 
         if (!\in_array($this->format, ['HTML', 'RAW'])) {
-            $this->format='HTML';
+            $this->format = 'HTML';
         }
     }
 
     /**
      * Get the desired output format
      *
-     * @return  string f.i. "html" or "raw"
+     * @return string f.i. "html" or "raw"
      */
     public function getFormat(): string
     {
