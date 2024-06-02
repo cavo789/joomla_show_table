@@ -66,6 +66,10 @@ Then, in Excel, refresh the list to get the latest version of your data
 
 ![Refresh](./images/refresh.png)
 
+## Also read
+
+Make sure to read my blog post at [https://www.avonture.be/blog/joomla-show-table](https://www.avonture.be/blog/joomla-show-table).
+
 ## License
 
 [MIT](LICENSE)
