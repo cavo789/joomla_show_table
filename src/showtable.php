@@ -33,6 +33,9 @@
  *      - pdfmake: 0.0.10
  *      - jquery: 5.3.2
  * 
+ * 2024-06-02 - Remove warning using null and md5 
+ *       - Remove thead & tfoot when format is raw
+ * 
  * Description
  * -----------
  * This small script will execute a SQL statement against the database
@@ -310,10 +313,13 @@ class ShowTable
                 $line .= '<th>' . $field . '</th>';
             }
 
-            $table .=
-                '<thead><tr>' . $line . '</tr></thead>' .
-                '<tfoot><tr>' . $line . '</tr></tfoot>' .
-                '<tbody>';
+            if ('HTML' === $this->getFormat()) {
+                $table .=
+                    '<thead><tr>' . $line . '</tr></thead>' .
+                    '<tfoot><tr>' . $line . '</tr></tfoot>';
+            }
+
+            $table .= '<tbody>';
 
             foreach ($rows as $row) {
                 $line = '';
@@ -379,7 +385,7 @@ class ShowTable
     private function checkPassword(): void
     {
         // Get the password from the query string
-        $password = \filter_input(INPUT_GET, 'password', FILTER_UNSAFE_RAW);
+        $password = \filter_input(INPUT_GET, 'password', FILTER_UNSAFE_RAW) ?? '';
 
         if (self::PASSWORD !== \md5($password)) {
             header('HTTP/1.0 403 Forbidden');
