@@ -424,12 +424,12 @@ class ShowTable
         /* Initialize Joomla framework */
         define('_JEXEC', 1);
         // Load system defines
-        if (file_exists(dirname(__FILE__) . '/defines.php')) {
-            include_once dirname(__FILE__) . '/defines.php';
+        if (file_exists(self::ROOT . '/defines.php')) {
+            include_once self::ROOT . '/defines.php';
         }
 
         if (!defined('_JDEFINES')) {
-            define('JPATH_BASE', dirname(__FILE__));
+            define('JPATH_BASE', self::ROOT);
             include_once JPATH_BASE . '/includes/defines.php';
         }
 
