@@ -259,7 +259,6 @@ class ShowTable
                 "	});\n" .
                 "	\n" .
                 "	$('#tbl').DataTable({\n" .
-                "		'fixedHeader': false,\n" .
                 "		'scrollY': '60vh',\n" .
                 "		'scrollX': '100%',\n" .
                 "		'scrollCollapse': true,\n" .
